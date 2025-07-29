@@ -231,8 +231,6 @@ const Checkout = () => {
               >
                 Place Order
             </button>
-
-
             </div>
           </div>
         </div>
