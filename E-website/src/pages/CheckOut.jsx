@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { FaCcVisa, FaCcMastercard, FaPaypal } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
+
 
 const Checkout = () => {
   const [formData, setFormData] = useState({
@@ -9,32 +12,33 @@ const Checkout = () => {
     lastName: '',
     email: '',
     address: '',
+    apartment: '',
     city: '',
     phone: '',
+    saveInfo: false
   });
-
+   
+  const navigate = useNavigate();
   const { items, total } = useSelector(state => state.cart);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name]: type === 'checkbox' ? checked : value
     }));
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
-     
-
       {/* Breadcrumb */}
       <div className="bg-gray-50 py-4 px-6 border-b">
         <div className="container mx-auto">
           <div className="text-sm text-gray-600">
-            <Link to="/account" className="hover:text-primary">Account</Link> / 
-            <Link to="/account" className="hover:text-primary ml-1">My Account</Link> / 
-            <Link to="/products" className="hover:text-primary ml-1">Product</Link> / 
-            <Link to="/edit" className="hover:text-primary ml-1">View Edit</Link> / 
+            <Link to="/" className="hover:text-primary">Home</Link> / 
+            <Link to="/contact" className="hover:text-primary ml-1">Contact</Link> / 
+            <Link to="/about" className="hover:text-primary ml-1">About</Link> / 
+            <Link to="/signup" className="hover:text-primary ml-1">Sign Up</Link> / 
             <span className="text-gray-800 ml-1">CheckOut</span>
           </div>
         </div>
@@ -47,22 +51,24 @@ const Checkout = () => {
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Billing Details */}
           <div className="lg:w-1/2">
-            <div className="bg-white rounded-lg shadow-sm p-6">
+            <div className="bg-white p-6">
               <h2 className="text-xl font-semibold mb-6">Billing Details</h2>
-              
+
+              {/* First Name & Company Name */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div>
-                  <label className="block text-gray-700 mb-1">First Name</label>
+                  <label className="block text-gray-700 mb-2">First Name*</label>
                   <input
                     type="text"
                     name="firstName"
                     value={formData.firstName}
                     onChange={handleChange}
                     className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-primary"
+                    required
                   />
                 </div>
                 <div>
-                  <label className="block text-gray-700 mb-1">Company Name</label>
+                  <label className="block text-gray-700 mb-2">Company Name</label>
                   <input
                     type="text"
                     name="companyName"
@@ -73,75 +79,96 @@ const Checkout = () => {
                 </div>
               </div>
 
+              {/* Email */}
               <div className="mb-4">
-                <label className="block text-gray-700 mb-1">Last Name</label>
-                <input
-                  type="text"
-                  name="lastName"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-primary"
-                />
-              </div>
-
-              <div className="mb-4">
-                <label className="block text-gray-700 mb-1">Email Address</label>
+                <label className="block text-gray-700 mb-2">Email Address*</label>
                 <input
                   type="email"
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
                   className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-primary"
+                  required
                 />
               </div>
 
+              {/* Street Address */}
               <div className="mb-4">
-                <label className="block text-gray-700 mb-1">Street Address</label>
+                <label className="block text-gray-700 mb-2">Street Address*</label>
                 <input
                   type="text"
                   name="address"
                   value={formData.address}
                   onChange={handleChange}
                   className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-primary"
+                  required
                 />
               </div>
 
+              {/* Apartment */}
+              <div className="mb-4">
+                <label className="block text-gray-700 mb-2">Apartment, floor, etc. (Optional)</label>
+                <input
+                  type="text"
+                  name="apartment"
+                  value={formData.apartment}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-primary"
+                />
+              </div>
+
+              {/* Town/City & Phone */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div>
-                  <label className="block text-gray-700 mb-1">City</label>
+                  <label className="block text-gray-700 mb-2">Town/City*</label>
                   <input
                     type="text"
                     name="city"
                     value={formData.city}
                     onChange={handleChange}
                     className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-primary"
+                    required
                   />
                 </div>
                 <div>
-                  <label className="block text-gray-700 mb-1">Phone Number</label>
+                  <label className="block text-gray-700 mb-2">Phone Number*</label>
                   <input
                     type="tel"
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
                     className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-primary"
+                    required
                   />
                 </div>
+              </div>
+
+              {/* Save Info Checkbox */}
+              <div className="flex items-center mb-4">
+                <input
+                  type="checkbox"
+                  id="saveInfo"
+                  name="saveInfo"
+                  checked={formData.saveInfo}
+                  onChange={handleChange}
+                  className="mr-2"
+                />
+                <label htmlFor="saveInfo">Save this information for faster check-out next time</label>
               </div>
             </div>
           </div>
 
           {/* Order Summary */}
           <div className="lg:w-1/2">
-            <div className="bg-white rounded-lg shadow-sm p-6">
+            <div className="bg-white p-6">
               <h2 className="text-xl font-semibold mb-6">Your Order</h2>
-              
+
               <div className="border-b pb-4 mb-4">
                 <div className="flex justify-between font-medium mb-2">
                   <span>Product</span>
                   <span>Total</span>
                 </div>
-                
+
                 {items.map(item => (
                   <div key={item.id} className="flex justify-between text-gray-600 mb-1">
                     <span>{item.name} × {item.quantity}</span>
@@ -165,53 +192,47 @@ const Checkout = () => {
                 </div>
               </div>
 
+              {/* Payment Options */}
               <div className="mb-6">
-                <div className="flex items-center mb-2">
-                  <input type="radio" id="bank" name="payment" className="mr-2" />
-                  <label htmlFor="bank">Bank</label>
+                <div className="flex justify-between items-center mb-4">
+                  <div className="flex items-center">
+                    <input type="radio" id="bank" name="payment" className="mr-2" />
+                    <label htmlFor="bank">Bank</label>
+                  </div>
+                  <div className="flex space-x-4">
+                    <FaCcVisa className="text-blue-900 text-xl" />
+                    <FaCcMastercard className="text-red-600 text-xl" />
+                    <FaPaypal className="text-blue-700 text-xl" />
+                  </div>
                 </div>
-                <div className="flex items-center mb-2">
+                <div className="flex items-center">
                   <input type="radio" id="cash" name="payment" className="mr-2" />
                   <label htmlFor="cash">Cash on delivery</label>
                 </div>
               </div>
 
-              <div className="flex flex-wrap gap-2">
-                <button className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300">
-                  Submit
-                </button>
-                <button className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300">
-                  Support
-                </button>
-                <button className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300">
-                  Ticket
-                </button>
-                <button className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300">
-                  Save
-                </button>
-                <button className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300">
-                  Code on Delivery
-                </button>
+              {/* Coupon */}
+              <div className="mb-6">
+                <div className="flex flex-col sm:flex-row">
+                  <input
+                    type="text"
+                    placeholder="Enter coupon code"
+                    className="flex-grow px-4 py-2 border rounded-md sm:rounded-l-md sm:rounded-r-none mb-2 sm:mb-0 focus:outline-none focus:ring-1 focus:ring-primary"
+                  />
+                  <button className="sm:ml-2 px-6 py-2 bg-red-600 text-white rounded-md sm:rounded-r-md hover:bg-red-700">
+                    Apply Coupon
+                  </button>
+                </div>
               </div>
 
-              <button className="w-full mt-4 py-3 bg-primary text-white rounded-md hover:bg-primary-dark">
-                Submit Order
-              </button>
+            <button
+               onClick={() => navigate('/this-route-does-not-exist')}
+               className="w-44 py-3 bg-red-600 text-white rounded-md hover:bg-red-700"
+              >
+                Place Order
+            </button>
 
-              <button className="w-full mt-2 py-3 border border-primary text-primary rounded-md hover:bg-primary hover:text-white">
-                Phone Order
-              </button>
 
-              <div className="mt-4 flex">
-                <input
-                  type="text"
-                  placeholder="Enter coupon code"
-                  className="flex-grow px-4 py-2 border rounded-l-md focus:outline-none focus:ring-1 focus:ring-primary"
-                />
-                <button className="px-4 py-2 bg-primary text-white rounded-r-md hover:bg-primary-dark">
-                  Apply Custom
-                </button>
-              </div>
             </div>
           </div>
         </div>

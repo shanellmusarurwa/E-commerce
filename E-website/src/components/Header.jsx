@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { FaUser, FaHeart, FaShoppingCart, FaSearch, FaChevronDown, FaSignOutAlt } from 'react-icons/fa';
@@ -14,6 +14,20 @@ const Header = () => {
   const { items: cartItems } = useSelector(state => state.cart);
   const { items: wishlistItems } = useSelector(state => state.wishlist);
   const dispatch = useDispatch();
+
+  // State for cart animation
+  const [cartPulse, setCartPulse] = useState(false);
+  const [prevCartCount, setPrevCartCount] = useState(cartItems.length);
+
+  useEffect(() => {
+    // Trigger animation when cart items increase
+    if (cartItems.length > prevCartCount) {
+      setCartPulse(true);
+      const timer = setTimeout(() => setCartPulse(false), 1000); // Animation lasts 1 second
+      return () => clearTimeout(timer);
+    }
+    setPrevCartCount(cartItems.length);
+  }, [cartItems, prevCartCount]);
 
   const handleLogout = async () => {
     try {
@@ -84,12 +98,14 @@ const Header = () => {
             </Link>
 
             <Link to="/cart" className="relative text-gray-600 hover:text-primary">
-              <FaShoppingCart className="text-xl" />
-              {cartItems.length > 0 && (
-                <span className="absolute -top-2 -right-2 bg-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                  {cartItems.length}
-                </span>
-              )}
+              <div className={`relative ${cartPulse ? 'animate-ping-once' : ''}`}>
+                <FaShoppingCart className="text-xl" />
+                {cartItems.length > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                    {cartItems.length}
+                  </span>
+                )}
+              </div>
             </Link>
 
             {isAuthenticated ? (
@@ -145,6 +161,18 @@ const Header = () => {
           </div>
         </div>
       </div>
+
+      {/* Add this to your global CSS file */}
+      <style jsx>{`
+        @keyframes ping {
+          0% { transform: scale(1); opacity: 1; }
+          50% { transform: scale(1.2); opacity: 0.5; }
+          100% { transform: scale(1); opacity: 1; }
+        }
+        .animate-ping-once {
+          animation: ping 0.5s ease-in-out 1;
+        }
+      `}</style>
     </header>
   );
 };

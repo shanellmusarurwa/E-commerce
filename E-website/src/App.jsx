@@ -5,8 +5,8 @@ import { ToastContainer } from 'react-toastify';
 import { useEffect } from 'react';
 import 'react-toastify/dist/ReactToastify.css';
 
-// Import auth actions correctly
-import { listenToAuthChanges, logout } from './store/slices/authSlice';
+// Import auth actions
+import { listenToAuthChanges } from './store/slices/authSlice';
 
 // Import all components
 import Home from './pages/Home';
@@ -16,6 +16,7 @@ import SignUp from './pages/SignUp';
 import Login from './pages/Login';
 import ProductDetails from './pages/ProductDetails';
 import Cart from './pages/Cart';
+import Checkout from './pages/CheckOut';
 import Wishlist from './pages/Wishlist';
 import Account from './pages/Account';
 import NotFound from './pages/NotFound';
@@ -24,25 +25,16 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
 import ProtectedRoute from './components/ProtectedRoute';
-
-// Error boundary component (create this file)
 import ErrorBoundary from './components/ErrorBoundary';
 
-// Main App component with Redux hooks
 function AppContent() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    // Setup auth state listener with proper error handling
-    try {
-      const unsubscribe = dispatch(listenToAuthChanges());
-      
-      return () => {
-        if (unsubscribe) unsubscribe();
-      };
-    } catch (error) {
-      console.error('Auth listener error:', error);
-    }
+    const unsubscribe = dispatch(listenToAuthChanges());
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
   }, [dispatch]);
 
   return (
@@ -59,8 +51,8 @@ function AppContent() {
           <Route path="/login" element={<Login />} />
           <Route path="/products/:id" element={<ProductDetails />} />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/checkout" element={<Checkout />} />
           
-          {/* Protected Routes */}
           <Route element={<ProtectedRoute />}>
             <Route path="/wishlist" element={<Wishlist />} />
             <Route path="/account" element={<Account />} />
@@ -88,7 +80,6 @@ function AppContent() {
   );
 }
 
-// Wrapper component that provides the Redux store
 function App() {
   return (
     <Provider store={store}>
